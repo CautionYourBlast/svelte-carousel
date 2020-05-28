@@ -1,22 +1,31 @@
+<div class="carousel {carouselClasses}">
+	{#if buttons}
+		<button class="left" on:click={left} aria-label="left">
+			<slot name="left-control"></slot>
+		</button>
+	{/if}
 
-<div class="carousel">
-	<button class="left" on:click={left} aria-label="left">
-		<slot name="left-control"></slot>
-	</button>
-	<div class="slides" bind:this={siema}>
+	<div class="slides {slidesClasses}" bind:this={siema}>
 		<slot></slot>
 	</div>
-    {#if dots}
-	<ul>
-		{#each pips as pip, i}
-		<li on:click={() => go(i)} class={currentIndex === i ? "active" : ""}></li>
-		{/each}
-	</ul>
-    {/if}
-	<button class="right" on:click={right} aria-label="right">
-		<slot name="right-control"></slot>
-	</button>
+	{#if dots}
+		<ul>
+			{#each pips as pip, i}
+				<li on:click={() => go(i)} class={currentIndex === i ? "active" : ""}></li>
+			{/each}
+		</ul>
+	{/if}
+	{#if buttons}
+		<button class="right" on:click={right} aria-label="right">
+			<slot name="right-control"></slot>
+		</button>
+	{/if}
+
 </div>
+
+
+<svelte:window bind:outerWidth={outerWidth}/>
+
 
 <style>
 	.carousel {
@@ -25,7 +34,7 @@
 		justify-content: center;
 		align-items: center;
 	}
-	
+
 	button {
 		position: absolute;
 		width: 40px;
@@ -40,11 +49,11 @@
   button:focus {
     outline: none;
   }
-	
+
 	.left {
 		left: 2vw;
 	}
-	
+
 	.right {
 		right: 2vw;
 	}
@@ -79,7 +88,7 @@
 <script>
 	import Siema from 'siema'
 	import { onMount, createEventDispatcher } from 'svelte'
-	
+
 	export let perPage = 3
 	export let loop = true
 	export let autoplay = 0
@@ -87,52 +96,73 @@
 	export let easing = 'ease-out'
 	export let startIndex = 0
 	export let draggable = true
-	export let multipleDrag = true	
-	export let dots = true	
+	export let multipleDrag = true
+	export let dots = true
 	export let threshold = 20
 	export let rtl = false
-	let currentIndex = startIndex;
-	
+	export let autoInit = true
+	export let active = false
+	export let buttons = true
+	export let slidesClasses = ""
+	export let carouselClasses = ""
+	let currentIndex = startIndex
+
+
 	let siema
 	let controller
 	let timer
+	let pips
+	let outerWidth
 
 	const dispatch = createEventDispatcher()
 
 	$: pips = controller ? controller.innerElements : []
-	
-	onMount(() => {
+
+	export const initCarousel = () => {
+		active = true
 		controller = new Siema({
 			selector: siema,
 			perPage,
 			loop,
-  			duration,
-  			easing,
-  			startIndex,
-  			draggable,
- 			multipleDrag,
-  			threshold,
-  			rtl,
+			duration,
+			easing,
+			startIndex,
+			draggable,
+			multipleDrag,
+			threshold,
+			rtl,
 			onChange: handleChange
 		})
-		
 		autoplay && setInterval(right, autoplay)
 
-		return () => {
-			autoplay && clearTimeout(timer)
-			controller.destroy()
+	}
+
+	onMount(() => {
+		if (autoInit) {
+			initCarousel()
+			return () => {
+				autoplay && clearTimeout(timer)
+				controller.destroy()
+			}
 		}
 	})
-	
+
 	function left () {
 		controller.prev()
 	}
-	
+
 	function right () {
 		controller.next()
 	}
 
-	function go (index) {
+	export function destroy () {
+		if(controller) {
+			controller.destroy(true)
+
+		}
+	}
+
+	export function go (index) {
 		controller.goTo(index)
 	}
 

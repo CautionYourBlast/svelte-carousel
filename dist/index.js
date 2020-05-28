@@ -171,6 +171,17 @@
     }
     const outroing = new Set();
     let outros;
+    function group_outros() {
+        outros = {
+            remaining: 0,
+            callbacks: []
+        };
+    }
+    function check_outros() {
+        if (!outros.remaining) {
+            run_all(outros.callbacks);
+        }
+    }
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
@@ -323,8 +334,8 @@
 
     function add_css() {
     	var style = element("style");
-    	style.id = 'svelte-1ppqxio-style';
-    	style.textContent = ".carousel.svelte-1ppqxio{position:relative;width:100%;justify-content:center;align-items:center}button.svelte-1ppqxio{position:absolute;width:40px;height:40px;top:50%;z-index:50;margin-top:-20px;border:none;background-color:transparent}button.svelte-1ppqxio:focus{outline:none}.left.svelte-1ppqxio{left:2vw}.right.svelte-1ppqxio{right:2vw}ul.svelte-1ppqxio{list-style-type:none;position:absolute;display:flex;justify-content:center;width:100%;margin-top:-30px;padding:0}ul.svelte-1ppqxio li.svelte-1ppqxio{margin:6px;border-radius:100%;background-color:rgba(255,255,255,0.5);height:8px;width:8px}ul.svelte-1ppqxio li.svelte-1ppqxio:hover{background-color:rgba(255,255,255,0.85)}ul.svelte-1ppqxio li.active.svelte-1ppqxio{background-color:rgba(255,255,255,1)}";
+    	style.id = 'svelte-ma7fsz-style';
+    	style.textContent = ".carousel.svelte-ma7fsz{position:relative;width:100%;justify-content:center;align-items:center}button.svelte-ma7fsz{position:absolute;width:40px;height:40px;top:50%;z-index:50;margin-top:-20px;border:none;background-color:transparent}button.svelte-ma7fsz:focus{outline:none}.left.svelte-ma7fsz{left:2vw}.right.svelte-ma7fsz{right:2vw}ul.svelte-ma7fsz{list-style-type:none;position:absolute;display:flex;justify-content:center;width:100%;margin-top:-30px;padding:0}ul.svelte-ma7fsz li.svelte-ma7fsz{margin:6px;border-radius:100%;background-color:rgba(255,255,255,0.5);height:8px;width:8px}ul.svelte-ma7fsz li.svelte-ma7fsz:hover{background-color:rgba(255,255,255,0.85)}ul.svelte-ma7fsz li.active.svelte-ma7fsz{background-color:rgba(255,255,255,1)}";
     	append(document.head, style);
     }
 
@@ -341,8 +352,68 @@
     const get_left_control_slot_changes = ({}) => ({});
     const get_left_control_slot_context = ({}) => ({});
 
-    // (9:4) {#if dots}
-    function create_if_block(ctx) {
+    // (2:1) {#if buttons}
+    function create_if_block_2(ctx) {
+    	var button, current, dispose;
+
+    	const left_control_slot_1 = ctx.$$slots["left-control"];
+    	const left_control_slot = create_slot(left_control_slot_1, ctx, get_left_control_slot_context);
+
+    	return {
+    		c() {
+    			button = element("button");
+
+    			if (left_control_slot) left_control_slot.c();
+
+    			attr(button, "class", "left svelte-ma7fsz");
+    			attr(button, "aria-label", "left");
+    			dispose = listen(button, "click", ctx.left);
+    		},
+
+    		l(nodes) {
+    			if (left_control_slot) left_control_slot.l(button_nodes);
+    		},
+
+    		m(target, anchor) {
+    			insert(target, button, anchor);
+
+    			if (left_control_slot) {
+    				left_control_slot.m(button, null);
+    			}
+
+    			current = true;
+    		},
+
+    		p(changed, ctx) {
+    			if (left_control_slot && left_control_slot.p && changed.$$scope) {
+    				left_control_slot.p(get_slot_changes(left_control_slot_1, ctx, changed, get_left_control_slot_changes), get_slot_context(left_control_slot_1, ctx, get_left_control_slot_context));
+    			}
+    		},
+
+    		i(local) {
+    			if (current) return;
+    			transition_in(left_control_slot, local);
+    			current = true;
+    		},
+
+    		o(local) {
+    			transition_out(left_control_slot, local);
+    			current = false;
+    		},
+
+    		d(detaching) {
+    			if (detaching) {
+    				detach(button);
+    			}
+
+    			if (left_control_slot) left_control_slot.d(detaching);
+    			dispose();
+    		}
+    	};
+    }
+
+    // (11:1) {#if dots}
+    function create_if_block_1(ctx) {
     	var ul;
 
     	var each_value = ctx.pips;
@@ -360,7 +431,7 @@
     			for (var i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
-    			attr(ul, "class", "svelte-1ppqxio");
+    			attr(ul, "class", "svelte-ma7fsz");
     		},
 
     		m(target, anchor) {
@@ -404,7 +475,7 @@
     	};
     }
 
-    // (11:2) {#each pips as pip, i}
+    // (13:3) {#each pips as pip, i}
     function create_each_block(ctx) {
     	var li, li_class_value, dispose;
 
@@ -415,7 +486,7 @@
     	return {
     		c() {
     			li = element("li");
-    			attr(li, "class", li_class_value = "" + (ctx.currentIndex === ctx.i ? "active" : "") + " svelte-1ppqxio");
+    			attr(li, "class", li_class_value = "" + (ctx.currentIndex === ctx.i ? "active" : "") + " svelte-ma7fsz");
     			dispose = listen(li, "click", click_handler);
     		},
 
@@ -425,7 +496,7 @@
 
     		p(changed, new_ctx) {
     			ctx = new_ctx;
-    			if ((changed.currentIndex) && li_class_value !== (li_class_value = "" + (ctx.currentIndex === ctx.i ? "active" : "") + " svelte-1ppqxio")) {
+    			if ((changed.currentIndex) && li_class_value !== (li_class_value = "" + (ctx.currentIndex === ctx.i ? "active" : "") + " svelte-ma7fsz")) {
     				attr(li, "class", li_class_value);
     			}
     		},
@@ -440,66 +511,105 @@
     	};
     }
 
-    function create_fragment(ctx) {
-    	var div1, button0, t0, div0, t1, t2, button1, current, dispose;
-
-    	const left_control_slot_1 = ctx.$$slots["left-control"];
-    	const left_control_slot = create_slot(left_control_slot_1, ctx, get_left_control_slot_context);
-
-    	const default_slot_1 = ctx.$$slots.default;
-    	const default_slot = create_slot(default_slot_1, ctx, null);
-
-    	var if_block = (ctx.dots) && create_if_block(ctx);
+    // (18:1) {#if buttons}
+    function create_if_block(ctx) {
+    	var button, current, dispose;
 
     	const right_control_slot_1 = ctx.$$slots["right-control"];
     	const right_control_slot = create_slot(right_control_slot_1, ctx, get_right_control_slot_context);
 
     	return {
     		c() {
-    			div1 = element("div");
-    			button0 = element("button");
+    			button = element("button");
 
-    			if (left_control_slot) left_control_slot.c();
+    			if (right_control_slot) right_control_slot.c();
+
+    			attr(button, "class", "right svelte-ma7fsz");
+    			attr(button, "aria-label", "right");
+    			dispose = listen(button, "click", ctx.right);
+    		},
+
+    		l(nodes) {
+    			if (right_control_slot) right_control_slot.l(button_nodes);
+    		},
+
+    		m(target, anchor) {
+    			insert(target, button, anchor);
+
+    			if (right_control_slot) {
+    				right_control_slot.m(button, null);
+    			}
+
+    			current = true;
+    		},
+
+    		p(changed, ctx) {
+    			if (right_control_slot && right_control_slot.p && changed.$$scope) {
+    				right_control_slot.p(get_slot_changes(right_control_slot_1, ctx, changed, get_right_control_slot_changes), get_slot_context(right_control_slot_1, ctx, get_right_control_slot_context));
+    			}
+    		},
+
+    		i(local) {
+    			if (current) return;
+    			transition_in(right_control_slot, local);
+    			current = true;
+    		},
+
+    		o(local) {
+    			transition_out(right_control_slot, local);
+    			current = false;
+    		},
+
+    		d(detaching) {
+    			if (detaching) {
+    				detach(button);
+    			}
+
+    			if (right_control_slot) right_control_slot.d(detaching);
+    			dispose();
+    		}
+    	};
+    }
+
+    function create_fragment(ctx) {
+    	var div1, t0, div0, div0_class_value, t1, t2, div1_class_value, current, dispose;
+
+    	add_render_callback(ctx.onwindowresize);
+
+    	var if_block0 = (ctx.buttons) && create_if_block_2(ctx);
+
+    	const default_slot_1 = ctx.$$slots.default;
+    	const default_slot = create_slot(default_slot_1, ctx, null);
+
+    	var if_block1 = (ctx.dots) && create_if_block_1(ctx);
+
+    	var if_block2 = (ctx.buttons) && create_if_block(ctx);
+
+    	return {
+    		c() {
+    			div1 = element("div");
+    			if (if_block0) if_block0.c();
     			t0 = space();
     			div0 = element("div");
 
     			if (default_slot) default_slot.c();
     			t1 = space();
-    			if (if_block) if_block.c();
+    			if (if_block1) if_block1.c();
     			t2 = space();
-    			button1 = element("button");
+    			if (if_block2) if_block2.c();
 
-    			if (right_control_slot) right_control_slot.c();
-
-    			attr(button0, "class", "left svelte-1ppqxio");
-
-    			attr(div0, "class", "slides");
-
-    			attr(button1, "class", "right svelte-1ppqxio");
-    			attr(div1, "class", "carousel svelte-1ppqxio");
-
-    			dispose = [
-    				listen(button0, "click", ctx.left),
-    				listen(button1, "click", ctx.right)
-    			];
+    			attr(div0, "class", div0_class_value = "slides " + ctx.slidesClasses + " svelte-ma7fsz");
+    			attr(div1, "class", div1_class_value = "carousel " + ctx.carouselClasses + " svelte-ma7fsz");
+    			dispose = listen(window, "resize", ctx.onwindowresize);
     		},
 
     		l(nodes) {
-    			if (left_control_slot) left_control_slot.l(button0_nodes);
-
     			if (default_slot) default_slot.l(div0_nodes);
-
-    			if (right_control_slot) right_control_slot.l(button1_nodes);
     		},
 
     		m(target, anchor) {
     			insert(target, div1, anchor);
-    			append(div1, button0);
-
-    			if (left_control_slot) {
-    				left_control_slot.m(button0, null);
-    			}
-
+    			if (if_block0) if_block0.m(div1, null);
     			append(div1, t0);
     			append(div1, div0);
 
@@ -509,20 +619,29 @@
 
     			add_binding_callback(() => ctx.div0_binding(div0, null));
     			append(div1, t1);
-    			if (if_block) if_block.m(div1, null);
+    			if (if_block1) if_block1.m(div1, null);
     			append(div1, t2);
-    			append(div1, button1);
-
-    			if (right_control_slot) {
-    				right_control_slot.m(button1, null);
-    			}
-
+    			if (if_block2) if_block2.m(div1, null);
     			current = true;
     		},
 
     		p(changed, ctx) {
-    			if (left_control_slot && left_control_slot.p && changed.$$scope) {
-    				left_control_slot.p(get_slot_changes(left_control_slot_1, ctx, changed, get_left_control_slot_changes), get_slot_context(left_control_slot_1, ctx, get_left_control_slot_context));
+    			if (ctx.buttons) {
+    				if (if_block0) {
+    					if_block0.p(changed, ctx);
+    					transition_in(if_block0, 1);
+    				} else {
+    					if_block0 = create_if_block_2(ctx);
+    					if_block0.c();
+    					transition_in(if_block0, 1);
+    					if_block0.m(div1, t0);
+    				}
+    			} else if (if_block0) {
+    				group_outros();
+    				transition_out(if_block0, 1, () => {
+    					if_block0 = null;
+    				});
+    				check_outros();
     			}
 
     			if (default_slot && default_slot.p && changed.$$scope) {
@@ -534,36 +653,58 @@
     				ctx.div0_binding(div0, null);
     			}
 
-    			if (ctx.dots) {
-    				if (if_block) {
-    					if_block.p(changed, ctx);
-    				} else {
-    					if_block = create_if_block(ctx);
-    					if_block.c();
-    					if_block.m(div1, t2);
-    				}
-    			} else if (if_block) {
-    				if_block.d(1);
-    				if_block = null;
+    			if ((!current || changed.slidesClasses) && div0_class_value !== (div0_class_value = "slides " + ctx.slidesClasses + " svelte-ma7fsz")) {
+    				attr(div0, "class", div0_class_value);
     			}
 
-    			if (right_control_slot && right_control_slot.p && changed.$$scope) {
-    				right_control_slot.p(get_slot_changes(right_control_slot_1, ctx, changed, get_right_control_slot_changes), get_slot_context(right_control_slot_1, ctx, get_right_control_slot_context));
+    			if (ctx.dots) {
+    				if (if_block1) {
+    					if_block1.p(changed, ctx);
+    				} else {
+    					if_block1 = create_if_block_1(ctx);
+    					if_block1.c();
+    					if_block1.m(div1, t2);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
+    			}
+
+    			if (ctx.buttons) {
+    				if (if_block2) {
+    					if_block2.p(changed, ctx);
+    					transition_in(if_block2, 1);
+    				} else {
+    					if_block2 = create_if_block(ctx);
+    					if_block2.c();
+    					transition_in(if_block2, 1);
+    					if_block2.m(div1, null);
+    				}
+    			} else if (if_block2) {
+    				group_outros();
+    				transition_out(if_block2, 1, () => {
+    					if_block2 = null;
+    				});
+    				check_outros();
+    			}
+
+    			if ((!current || changed.carouselClasses) && div1_class_value !== (div1_class_value = "carousel " + ctx.carouselClasses + " svelte-ma7fsz")) {
+    				attr(div1, "class", div1_class_value);
     			}
     		},
 
     		i(local) {
     			if (current) return;
-    			transition_in(left_control_slot, local);
+    			transition_in(if_block0);
     			transition_in(default_slot, local);
-    			transition_in(right_control_slot, local);
+    			transition_in(if_block2);
     			current = true;
     		},
 
     		o(local) {
-    			transition_out(left_control_slot, local);
+    			transition_out(if_block0);
     			transition_out(default_slot, local);
-    			transition_out(right_control_slot, local);
+    			transition_out(if_block2);
     			current = false;
     		},
 
@@ -572,59 +713,74 @@
     				detach(div1);
     			}
 
-    			if (left_control_slot) left_control_slot.d(detaching);
+    			if (if_block0) if_block0.d();
 
     			if (default_slot) default_slot.d(detaching);
     			ctx.div0_binding(null, div0);
-    			if (if_block) if_block.d();
-
-    			if (right_control_slot) right_control_slot.d(detaching);
-    			run_all(dispose);
+    			if (if_block1) if_block1.d();
+    			if (if_block2) if_block2.d();
+    			dispose();
     		}
     	};
     }
 
     function instance($$self, $$props, $$invalidate) {
     	
-    	
-    	let { perPage = 3, loop = true, autoplay = 0, duration = 200, easing = 'ease-out', startIndex = 0, draggable = true, multipleDrag = true, dots = true, threshold = 20, rtl = false } = $$props;
+
+    	let { perPage = 3, loop = true, autoplay = 0, duration = 200, easing = 'ease-out', startIndex = 0, draggable = true, multipleDrag = true, dots = true, threshold = 20, rtl = false, dotsByPage = true, autoInit = true, active = false, buttons = true, slidesClasses = "", carouselClasses = "" } = $$props;
     	let currentIndex = startIndex;
-    	
+
+
     	let siema;
     	let controller;
     	let timer;
+    	let pips;
+    	let outerWidth;
 
     	const dispatch = createEventDispatcher();
-    	
-    	onMount(() => {
+
+    	const initCarousel = () => {
+    		$$invalidate('active', active = true);
     		$$invalidate('controller', controller = new Siema({
     			selector: siema,
     			perPage,
     			loop,
-      			duration,
-      			easing,
-      			startIndex,
-      			draggable,
-     			multipleDrag,
-      			threshold,
-      			rtl,
+    			duration,
+    			easing,
+    			startIndex,
+    			draggable,
+    			multipleDrag,
+    			threshold,
+    			rtl,
     			onChange: handleChange
     		}));
-    		
     		autoplay && setInterval(right, autoplay);
 
-    		return () => {
-    			autoplay && clearTimeout(timer);
-    			controller.destroy();
+    	};
+
+    	onMount(() => {
+    		if (autoInit) {
+    			initCarousel();
+    			return () => {
+    				autoplay && clearTimeout(timer);
+    				controller.destroy();
+    			}
     		}
     	});
-    	
+
     	function left () {
     		controller.prev();
     	}
-    	
+
     	function right () {
     		controller.next();
+    	}
+
+    	function destroy () {
+    		if(controller) {
+    			controller.destroy(true);
+
+    		}
     	}
 
     	function go (index) {
@@ -641,6 +797,10 @@
     	}
 
     	let { $$slots = {}, $$scope } = $$props;
+
+    	function onwindowresize() {
+    		outerWidth = window.outerWidth; $$invalidate('outerWidth', outerWidth);
+    	}
 
     	function div0_binding($$node, check) {
     		siema = $$node;
@@ -663,10 +823,14 @@
     		if ('dots' in $$props) $$invalidate('dots', dots = $$props.dots);
     		if ('threshold' in $$props) $$invalidate('threshold', threshold = $$props.threshold);
     		if ('rtl' in $$props) $$invalidate('rtl', rtl = $$props.rtl);
+    		if ('dotsByPage' in $$props) $$invalidate('dotsByPage', dotsByPage = $$props.dotsByPage);
+    		if ('autoInit' in $$props) $$invalidate('autoInit', autoInit = $$props.autoInit);
+    		if ('active' in $$props) $$invalidate('active', active = $$props.active);
+    		if ('buttons' in $$props) $$invalidate('buttons', buttons = $$props.buttons);
+    		if ('slidesClasses' in $$props) $$invalidate('slidesClasses', slidesClasses = $$props.slidesClasses);
+    		if ('carouselClasses' in $$props) $$invalidate('carouselClasses', carouselClasses = $$props.carouselClasses);
     		if ('$$scope' in $$props) $$invalidate('$$scope', $$scope = $$props.$$scope);
     	};
-
-    	let pips;
 
     	$$self.$$.update = ($$dirty = { controller: 1 }) => {
     		if ($$dirty.controller) { $$invalidate('pips', pips = controller ? controller.innerElements : []); }
@@ -684,12 +848,22 @@
     		dots,
     		threshold,
     		rtl,
+    		dotsByPage,
+    		autoInit,
+    		active,
+    		buttons,
+    		slidesClasses,
+    		carouselClasses,
     		currentIndex,
     		siema,
+    		pips,
+    		outerWidth,
+    		initCarousel,
     		left,
     		right,
+    		destroy,
     		go,
-    		pips,
+    		onwindowresize,
     		div0_binding,
     		click_handler,
     		$$slots,
@@ -700,8 +874,20 @@
     class Carousel extends SvelteComponent {
     	constructor(options) {
     		super();
-    		if (!document.getElementById("svelte-1ppqxio-style")) add_css();
-    		init(this, options, instance, create_fragment, safe_not_equal, ["perPage", "loop", "autoplay", "duration", "easing", "startIndex", "draggable", "multipleDrag", "dots", "threshold", "rtl"]);
+    		if (!document.getElementById("svelte-ma7fsz-style")) add_css();
+    		init(this, options, instance, create_fragment, safe_not_equal, ["perPage", "loop", "autoplay", "duration", "easing", "startIndex", "draggable", "multipleDrag", "dots", "threshold", "rtl", "dotsByPage", "autoInit", "active", "buttons", "slidesClasses", "carouselClasses", "initCarousel", "destroy", "go"]);
+    	}
+
+    	get initCarousel() {
+    		return this.$$.ctx.initCarousel;
+    	}
+
+    	get destroy() {
+    		return this.$$.ctx.destroy;
+    	}
+
+    	get go() {
+    		return this.$$.ctx.go;
     	}
     }
 
